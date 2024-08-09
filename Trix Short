@@ -7,16 +7,12 @@ length = input.int(12, minval=1)
 // Calculate TRIX
 trixValue = 10000 * ta.change(ta.ema(ta.ema(ta.ema(math.log(close), length), length), length))
 
-// Plot TRIX
-plot(trixValue, color=#F44336, title="TRIX Strategy Short")
-hline(0, color=#787B86, title="Zero")
-
 // Alert condition for TRIX crossing above 1
 crossAboveOne = ta.crossunder(trixValue, 1.2)
 
 // Strategy entry for short positions
 if (crossAboveOne)
-    strategy.entry("Short", strategy.short, qty = 3)
+    strategy.entry("Short", strategy.short, qty = 4)
 
 // Get the entry price
 var float entryPrice = na
@@ -24,11 +20,12 @@ if (strategy.position_size < 0)
     entryPrice := strategy.opentrades.entry_price(0)
 
 // Define take profit and stop loss levels
-takeProfitLevel1 = entryPrice - 150
-takeProfitLevel2 = entryPrice - 400
-initialStopLoss = entryPrice + 60
+takeProfitLevel1 = entryPrice - 4
+takeProfitLevel2 = entryPrice - 12
+initialStopLoss = entryPrice + 20
+finalStopLoss = entryPrice + 2
 
 // Strategy exit for short positions with trailing stop
 if (strategy.position_size < 0)
-    strategy.exit("Exit Short1", "Short", limit=takeProfitLevel1, stop=initialStopLoss, qty = 2)
-    strategy.exit("Exit Short2", "Short", limit=takeProfitLevel2, stop=initialStopLoss, qty = 1)
+    strategy.exit("Exit Short1", "Short", limit=takeProfitLevel1, stop=initialStopLoss, qty = 3)
+    strategy.exit("Exit Short2", "Short", limit=takeProfitLevel2, stop=finalStopLoss, qty = 1)
