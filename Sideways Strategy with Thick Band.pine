@@ -1,0 +1,48 @@
+//@version=5
+strategy("Sideways Strategy with Thick Band", overlay=true)
+
+// Bollinger Bands settings
+bb_length = input.int(20, title="Bollinger Bands Length")
+bb_mult = input.float(2.0, title="Bollinger Bands Multiplier")
+basis = ta.sma(close, bb_length)
+dev = bb_mult * ta.stdev(close, bb_length)
+upper_bb = basis + dev
+lower_bb = basis - dev
+
+// RSI settings
+rsi_length = input.int(14, title="RSI Length")
+rsi_overbought = input.int(70, title="RSI Overbought Level")
+rsi_oversold = input.int(30, title="RSI Oversold Level")
+rsi = ta.rsi(close, rsi_length)
+
+// Entry conditions
+long_condition = (close <= lower_bb) and (rsi < rsi_oversold)
+short_condition = (close >= upper_bb) and (rsi > rsi_overbought)
+
+// Exit conditions
+exit_long = (close >= basis) or (rsi > 50)
+exit_short = (close <= basis) or (rsi < 50)
+
+// Track if there is an active long or short position
+long_active = strategy.position_size > 0
+short_active = strategy.position_size < 0
+
+// Plotting Bollinger Bands
+plot(upper_bb, color=color.red, title="Upper Bollinger Band")
+plot(lower_bb, color=color.green, title="Lower Bollinger Band")
+plot(basis, color=color.blue, title="Basis")
+
+// Drawing the thick band only if there is an open order
+is_sideways = close > lower_bb and close < upper_bb
+bgcolor((is_sideways and (long_active or short_active)) ? color.new(color.blue, 90) : na)
+
+// Strategy execution
+if (long_condition)
+    strategy.entry("Long", strategy.long)
+if (short_condition)
+    strategy.entry("Short", strategy.short)
+
+if (exit_long)
+    strategy.close("Long")
+if (exit_short)
+    strategy.close("Short")
