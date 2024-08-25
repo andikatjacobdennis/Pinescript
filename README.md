@@ -36,18 +36,18 @@ This strategy aims to identify and trade reversals with dynamic stop loss levels
 2. Adjust the parameters as needed for your trading strategy.
 3. Add the strategy to your TradingView chart and start backtesting or live trading.
 
-# Sideways Strategy with Thick Band
+### Sideways Strategy with Thick Band
 
 This Pine Script strategy, named "Sideways Strategy with Thick Band," is designed to identify potential trading opportunities during sideways market conditions using Bollinger Bands and the Relative Strength Index (RSI). The strategy aims to capitalize on price movements within a defined range and provides visual indicators on the TradingView chart.
 
-## Features
+#### Features
 
 - **Bollinger Bands**: Utilizes Bollinger Bands to define the trading range.
 - **RSI**: Uses the Relative Strength Index to confirm overbought or oversold conditions.
 - **Visual Indicators**: Plots Bollinger Bands and highlights the chart background when conditions for trading are met.
 - **Trade Execution**: Executes long and short trades based on predefined conditions and manages positions with exit rules.
 
-## Inputs
+#### Inputs
 
 - **Bollinger Bands Length (`bb_length`)**: The number of periods used to calculate the Bollinger Bands' moving average. Default is `20`.
 - **Bollinger Bands Multiplier (`bb_mult`)**: The multiplier used to determine the width of the Bollinger Bands. Default is `2.0`.
@@ -55,24 +55,24 @@ This Pine Script strategy, named "Sideways Strategy with Thick Band," is designe
 - **RSI Overbought Level (`rsi_overbought`)**: The RSI value above which the market is considered overbought. Default is `70`.
 - **RSI Oversold Level (`rsi_oversold`)**: The RSI value below which the market is considered oversold. Default is `30`.
 
-## Strategy Logic
+#### Strategy Logic
 
-### Entry Conditions
+##### Entry Conditions
 
 - **Long Entry**: Initiated when the closing price is at or below the lower Bollinger Band and the RSI is below the oversold level.
 - **Short Entry**: Initiated when the closing price is at or above the upper Bollinger Band and the RSI is above the overbought level.
 
-### Exit Conditions
+##### Exit Conditions
 
 - **Long Exit**: Executed when the closing price is at or above the Bollinger Bands' basis or the RSI rises above 50.
 - **Short Exit**: Executed when the closing price is at or below the Bollinger Bands' basis or the RSI falls below 50.
 
-### Position Tracking
+##### Position Tracking
 
 - **Long Active**: Indicates if a long position is currently active.
 - **Short Active**: Indicates if a short position is currently active.
 
-## Visualization
+#### Visualization
 
 - **Bollinger Bands**:
   - **Upper Bollinger Band**: Plotted in red.
@@ -80,7 +80,7 @@ This Pine Script strategy, named "Sideways Strategy with Thick Band," is designe
   - **Basis**: Plotted in blue.
 - **Background Color**: The background is shaded blue when the price is within the Bollinger Bands range and an order is active.
 
-## Usage
+#### Usage
 
 1. Copy the Pine Script code into the TradingView Pine Script editor.
 2. Add the strategy to your chart.
