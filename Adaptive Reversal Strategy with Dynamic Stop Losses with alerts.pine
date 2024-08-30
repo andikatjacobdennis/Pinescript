@@ -1,0 +1,73 @@
+//@version=5
+strategy("Adaptive Reversal Strategy with Dynamic Stop Losses with alerts.pine", overlay=true)
+
+// Input for stop losses and end time
+longStopLoss = input.float(1, title="Long Stop Loss (points)")
+shortStopLoss = input.float(1, title="Short Stop Loss (points)")
+startHour = input.int(9, title="Trade Start Hour", minval=0, maxval=23)
+startMinute = input.int(15, title="Trade Start Minute", minval=0, maxval=59)
+endHour = input.int(15, title="Trade End Hour", minval=0, maxval=23)
+endMinute = input.int(0, title="Trade End Minute", minval=0, maxval=59)
+
+// Convert entry and exit times to timestamps
+startDate = timestamp(year(timenow), month(timenow), dayofmonth(timenow), startHour, startMinute)
+endTime = timestamp(year(timenow), month(timenow), dayofmonth(timenow), endHour, endMinute)
+
+// Initialize variables
+var bool inTrade = false
+var bool isLong = false
+var float entryPrice = na
+
+// Define entry conditions (update as needed)
+longCondition = close > open  // Replace with your own condition
+shortCondition = close < open // Replace with your own condition
+
+// Check if the current time is within the trading window
+afterStartDate = time >= startDate and time < endTime
+
+// Manage trades
+if afterStartDate
+    if not inTrade
+        // Enter a long trade
+        if longCondition
+            strategy.entry("Long", strategy.long)
+            entryPrice := close
+            inTrade := true
+            isLong := true
+            alert("Buy Signal: Enter Long Trade", alert.freq_once_per_bar)
+
+        // Enter a short trade
+        if shortCondition
+            strategy.entry("Short", strategy.short)
+            entryPrice := close
+            inTrade := true
+            isLong := false
+            alert("Sell Signal: Enter Short Trade", alert.freq_once_per_bar)
+
+    if inTrade
+        // Stop loss conditions for long trades
+        if isLong
+            strategy.exit("Stop Loss Long", "Long", stop=entryPrice - longStopLoss)
+            // If stop loss is triggered, switch to short trade
+            if close < entryPrice - longStopLoss
+                strategy.entry("Short", strategy.short)
+                entryPrice := close
+                inTrade := true
+                isLong := false
+                alert("Sell Signal: Stop Loss Long - Enter Short Trade", alert.freq_once_per_bar)
+
+        // Stop loss conditions for short trades
+        if not isLong
+            strategy.exit("Stop Loss Short", "Short", stop=entryPrice + shortStopLoss)
+            // If stop loss is triggered, switch to long trade
+            if close > entryPrice + shortStopLoss
+                strategy.entry("Long", strategy.long)
+                entryPrice := close
+                inTrade := true
+                isLong := true
+                alert("Buy Signal: Stop Loss Short - Enter Long Trade", alert.freq_once_per_bar)
+
+// Close all trades at end time
+if time >= endTime
+    strategy.close_all()
+    inTrade := false
